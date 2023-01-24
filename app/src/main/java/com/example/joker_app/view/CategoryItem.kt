@@ -16,7 +16,7 @@ class CategoryItem(private val category: Category) : Item<CategoryItem.CategoryV
     override fun bind(viewHolder: CategoryViewHolder, position: Int) {
         viewHolder.let {
             it.itemView.findViewById<TextView>(R.id.txt_category_name).text = category.name
-            it.itemView.setBackgroundColor(category.bgColor.toInt())
+            it.itemView.setBackgroundResource(R.drawable.rounded_corner)
         }
     }
 

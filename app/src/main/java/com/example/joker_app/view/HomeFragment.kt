@@ -4,14 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.joker_app.R
 import com.example.joker_app.model.Category
+import com.example.joker_app.presentation.HomePresenter
 import com.xwray.groupie.GroupieAdapter
 
 class HomeFragment : Fragment() {
+
+    private lateinit var presenter: HomePresenter
+    private lateinit var progressBar: ProgressBar
+    private val adapter = GroupieAdapter()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        presenter = HomePresenter(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -21,20 +34,33 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        progressBar = view.findViewById(R.id.home_fragment_progress)
+
         view.findViewById<RecyclerView>(R.id.rv_fragment_home).let {
-            it.layoutManager = LinearLayoutManager(requireContext())
-
-            val adapter = GroupieAdapter()
+            it.layoutManager = GridLayoutManager(requireContext(), 2)
+            presenter.findAllCategories()
             it.adapter = adapter
-
-            adapter.add(CategoryItem(Category("Categoria 1", 0xFF76335e)))
-            adapter.add(CategoryItem(Category("Categoria 2", 0xFFA73E5C)))
-            adapter.add(CategoryItem(Category("Categoria 3", 0xFFEC4863)))
-            adapter.add(CategoryItem(Category("Categoria 4", 0xFFFF733F)))
-            adapter.add(CategoryItem(Category("Categoria 5", 0xFFFFD285)))
-            
-            adapter.notifyDataSetChanged()
         }
 
+    }
+
+    fun showCategories(response: List<Category>) {
+        val categories = response.map {
+            CategoryItem(it)
+        }
+        adapter.addAll(categories)
+        adapter.notifyDataSetChanged()
+    }
+
+    fun showProgress() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgress() {
+        progressBar.visibility = View.GONE
+    }
+
+    fun showFailure(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

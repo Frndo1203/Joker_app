@@ -1,3 +1,5 @@
 package com.example.joker_app.model
 
-data class Category(val name: String, val bgColor: Long)
+import com.example.joker_app.R
+
+data class Category(val name: String, val bgColor: Int = R.drawable.rounded_corner)
